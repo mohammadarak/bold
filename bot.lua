@@ -341,17 +341,16 @@ while is_running do -- Start a loop witch receive messages.
 	if response then
 		for i,msg in ipairs(response.result) do
 			last_update = msg.update_id
-			if msg.message then
-				if msg.message.reply_to_message then
+			if msg.message or msg.inline_query then
+				if msg.inline_query then
+					inline_processor(msg.inline_query)
+				elseif msg.message.reply_to_message then
 					rethink_reply(msg.message)
 				elseif msg.message.forward_from then
 					forward_to_msg(msg.message)
 				else
 					msg_processor(msg.message)
 				end
-			end
-			if msg.inline_query then
-				inline_processor(msg.inline_query)
 			end
 		end
 	else
